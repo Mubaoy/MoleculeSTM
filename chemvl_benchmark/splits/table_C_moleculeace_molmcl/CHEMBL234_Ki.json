@@ -1,0 +1,12 @@
+{
+    "table": "C",
+    "task": "CHEMBL234_Ki",
+    "config": "${MOLECULESTM_ROOT}/chemvl_benchmark/configs/table_C_moleculeace_molmcl/CHEMBL234_Ki.json",
+    "csv": "${CHEMVL_DATA_ROOT}/finetuning_datasets/MoleculeACE/CHEMBL234_Ki/processed/CHEMBL234_Ki_processed_ac.csv",
+    "split": "MolMCL",
+    "split_file": "${MOLECULESTM_ROOT}/chemvl_benchmark/splits/table_C_moleculeace_molmcl/CHEMBL234_Ki.npz",
+    "total": 3657,
+    "train": 2924,
+    "val": 367,
+    "test": 366
+}

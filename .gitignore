@@ -1,0 +1,26 @@
+# Local environments and caches
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# Local data, checkpoints, and generated training outputs
+data/
+outputs/
+checkpoints/
+*.ckpt
+*.pth
+*.pt
+*.bin
+*.safetensors
+*.npy
+*.npz
+*.log
+
+# Keep fixed ChemVL split indices for benchmark reproducibility.
+!chemvl_benchmark/splits/**/*.npz
+
+# Large local third-party/model directories that should not be committed.
+apex/
+MolBART/
+llama3-8B/

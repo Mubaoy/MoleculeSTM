@@ -1,0 +1,12 @@
+{
+    "table": "C",
+    "task": "CHEMBL3979_EC50",
+    "config": "${MOLECULESTM_ROOT}/chemvl_benchmark/configs/table_C_moleculeace_molmcl/CHEMBL3979_EC50.json",
+    "csv": "${CHEMVL_DATA_ROOT}/finetuning_datasets/MoleculeACE/CHEMBL3979_EC50/processed/CHEMBL3979_EC50_processed_ac.csv",
+    "split": "MolMCL",
+    "split_file": "${MOLECULESTM_ROOT}/chemvl_benchmark/splits/table_C_moleculeace_molmcl/CHEMBL3979_EC50.npz",
+    "total": 1125,
+    "train": 899,
+    "val": 114,
+    "test": 112
+}

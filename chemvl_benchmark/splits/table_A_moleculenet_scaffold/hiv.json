@@ -1,0 +1,12 @@
+{
+    "table": "A",
+    "task": "hiv",
+    "config": "${MOLECULESTM_ROOT}/chemvl_benchmark/configs/table_A_moleculenet_scaffold/hiv.json",
+    "csv": "${CHEMVL_DATA_ROOT}/finetuning_datasets/MPP/classification/hiv/processed/hiv_processed_ac.csv",
+    "split": "scaffold",
+    "split_file": "${MOLECULESTM_ROOT}/chemvl_benchmark/splits/table_A_moleculenet_scaffold/hiv.npz",
+    "total": 41127,
+    "train": 32901,
+    "val": 4113,
+    "test": 4113
+}

@@ -1,0 +1,12 @@
+{
+    "table": "A",
+    "task": "esol",
+    "config": "${MOLECULESTM_ROOT}/chemvl_benchmark/configs/table_A_moleculenet_scaffold/esol.json",
+    "csv": "${CHEMVL_DATA_ROOT}/finetuning_datasets/MPP/regression/esol/processed/esol_processed_ac.csv",
+    "split": "scaffold",
+    "split_file": "${MOLECULESTM_ROOT}/chemvl_benchmark/splits/table_A_moleculenet_scaffold/esol.npz",
+    "total": 1128,
+    "train": 902,
+    "val": 113,
+    "test": 113
+}

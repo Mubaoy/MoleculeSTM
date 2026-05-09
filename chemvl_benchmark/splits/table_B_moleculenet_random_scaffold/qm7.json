@@ -1,0 +1,13 @@
+{
+    "table": "B",
+    "task": "qm7",
+    "config": "${MOLECULESTM_ROOT}/chemvl_benchmark/configs/table_B_moleculenet_random_scaffold/qm7.json",
+    "csv": "${CHEMVL_DATA_ROOT}/finetuning_datasets/MPP/regression/qm7/processed/qm7_processed_ac.csv",
+    "split": "random_scaffold",
+    "split_seed": 1,
+    "split_file": "${MOLECULESTM_ROOT}/chemvl_benchmark/splits/table_B_moleculenet_random_scaffold/qm7.npz",
+    "total": 6830,
+    "train": 5464,
+    "val": 683,
+    "test": 683
+}

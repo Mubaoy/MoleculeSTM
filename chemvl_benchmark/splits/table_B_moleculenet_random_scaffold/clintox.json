@@ -1,0 +1,13 @@
+{
+    "table": "B",
+    "task": "clintox",
+    "config": "${MOLECULESTM_ROOT}/chemvl_benchmark/configs/table_B_moleculenet_random_scaffold/clintox.json",
+    "csv": "${CHEMVL_DATA_ROOT}/finetuning_datasets/MPP/classification/clintox/processed/clintox_processed_ac.csv",
+    "split": "random_scaffold",
+    "split_seed": 1,
+    "split_file": "${MOLECULESTM_ROOT}/chemvl_benchmark/splits/table_B_moleculenet_random_scaffold/clintox.npz",
+    "total": 1478,
+    "train": 1184,
+    "val": 147,
+    "test": 147
+}

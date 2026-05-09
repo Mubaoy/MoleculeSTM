@@ -1,0 +1,12 @@
+{
+    "table": "A",
+    "task": "bbbp",
+    "config": "${MOLECULESTM_ROOT}/chemvl_benchmark/configs/table_A_moleculenet_scaffold/bbbp.json",
+    "csv": "${CHEMVL_DATA_ROOT}/finetuning_datasets/MPP/classification/bbbp/processed/bbbp_processed_ac.csv",
+    "split": "scaffold",
+    "split_file": "${MOLECULESTM_ROOT}/chemvl_benchmark/splits/table_A_moleculenet_scaffold/bbbp.npz",
+    "total": 2039,
+    "train": 1631,
+    "val": 204,
+    "test": 204
+}

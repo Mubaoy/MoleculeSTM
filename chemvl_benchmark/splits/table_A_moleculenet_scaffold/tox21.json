@@ -1,0 +1,12 @@
+{
+    "table": "A",
+    "task": "tox21",
+    "config": "${MOLECULESTM_ROOT}/chemvl_benchmark/configs/table_A_moleculenet_scaffold/tox21.json",
+    "csv": "${CHEMVL_DATA_ROOT}/finetuning_datasets/MPP/classification/tox21/processed/tox21_processed_ac.csv",
+    "split": "scaffold",
+    "split_file": "${MOLECULESTM_ROOT}/chemvl_benchmark/splits/table_A_moleculenet_scaffold/tox21.npz",
+    "total": 7831,
+    "train": 6264,
+    "val": 783,
+    "test": 784
+}

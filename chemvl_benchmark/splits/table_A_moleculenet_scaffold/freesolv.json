@@ -1,0 +1,12 @@
+{
+    "table": "A",
+    "task": "freesolv",
+    "config": "${MOLECULESTM_ROOT}/chemvl_benchmark/configs/table_A_moleculenet_scaffold/freesolv.json",
+    "csv": "${CHEMVL_DATA_ROOT}/finetuning_datasets/MPP/regression/freesolv/processed/freesolv_processed_ac.csv",
+    "split": "scaffold",
+    "split_file": "${MOLECULESTM_ROOT}/chemvl_benchmark/splits/table_A_moleculenet_scaffold/freesolv.npz",
+    "total": 642,
+    "train": 513,
+    "val": 64,
+    "test": 65
+}
