@@ -1,71 +1,227 @@
 # MoleculeSTM-ChemVL Benchmark
 
-This repository is a fork of [chao1224/MoleculeSTM](https://github.com/chao1224/MoleculeSTM) with an added ChemVL-style benchmark wrapper for fair molecular property prediction evaluation.
+本仓库 fork 自 [chao1224/MoleculeSTM](https://github.com/chao1224/MoleculeSTM)，在原始 MoleculeSTM 代码基础上加入了 `chemvl_benchmark/` 评估模块，用于在 ChemVL 的固定数据划分和指标设置下公平评估 MoleculeSTM。
 
-The original MoleculeSTM project studies multi-modal molecule structure-text representation learning. This fork keeps the original MoleculeSTM code and adds a reproducible evaluation package under `chemvl_benchmark/`, so that MoleculeSTM can be evaluated on the same ChemVL data splits and metrics used by the ChemVL/MolMCL comparison workflow.
+原始 MoleculeSTM 是一个分子结构-文本多模态表征模型。本 fork 的重点不是重新实现 MoleculeSTM，而是把 MoleculeSTM 接入 ChemVL evaluation protocol，便于和 ChemVL/MolMCL 等方法在相同数据划分下比较。
 
-## Project Goal
+## 1. 本项目做了什么
 
-The goal is to compare MoleculeSTM and related molecular representation models under a consistent evaluation protocol:
-
-- same MoleculeNet datasets;
-- same ChemVL scaffold and random-scaffold split indices;
-- same runseed protocol (`runseed 1, 2, 3`);
-- same metric definitions;
-- compact, traceable result summaries committed to the fork.
-
-This avoids comparing results produced with different dataset splits or hidden preprocessing choices.
-
-## What This Fork Adds
+新增内容集中在：
 
 ```text
 chemvl_benchmark/
-  README.md                 Detailed benchmark documentation
-  DECISIONS.md              Design decisions and deviations from upstream
-  SUBMIT_FILES.md           Submission/checklist notes
-  configs/                  ChemVL-style benchmark configs
-  splits/                   Fixed train/validation/test split indices
-  scripts/                  Runners and summarization scripts
-  results/                  Compact CSV/Markdown result summaries
+  README.md                 ChemVL benchmark 详细说明
+  DECISIONS.md              关键修改和决策记录
+  SUBMIT_FILES.md           提交文件清单
+  configs/                  ChemVL-style benchmark 配置
+  splits/                   固定 train/val/test 划分索引
+  scripts/                  运行与汇总脚本
+  results/                  已完成实验的 CSV/Markdown 汇总结果
 ```
 
-The benchmark module supports two MoleculeSTM molecule-input branches:
+支持两种 MoleculeSTM 分子输入分支：
 
-- `Graph`: MoleculeSTM graph encoder.
-- `SMILES`: MoleculeSTM MegaMolBART/SMILES encoder.
+- `Graph`：使用 MoleculeSTM graph encoder。
+- `SMILES`：使用 MoleculeSTM MegaMolBART/SMILES encoder。
 
-The committed split files are intentionally included because the split choice has a major effect on performance and reproducibility.
+核心目标：
 
-## Benchmarks
+- 统一使用 ChemVL 的 MoleculeNet scaffold / random_scaffold 划分。
+- 固定 `runseed = 1, 2, 3`。
+- 统一分类/回归指标。
+- 提交小型、可追踪的 split/config/result 文件。
+- 不提交数据集、checkpoint、完整训练输出和日志。
+
+## 2. Benchmark 范围
 
 ### Table A: MoleculeNet scaffold
 
-Ten MoleculeNet datasets using ChemVL scaffold split:
+数据集：
 
 ```text
 bbbp, bace, clintox, tox21, sider, hiv, esol, freesolv, lipo, qm7
 ```
 
-Classification tasks use ROC-AUC. Regression tasks use RMSE, except QM7 uses MAE.
+指标：
+
+- 分类任务：ROC-AUC。
+- 回归任务：RMSE。
+- QM7：MAE。
 
 ### Table B: MoleculeNet random_scaffold
 
-The same ten MoleculeNet datasets using ChemVL random-scaffold split.
+同样的 10 个 MoleculeNet 数据集，使用 ChemVL random_scaffold 划分。
 
 ### Table C: MoleculeACE MolMCL protocol
 
-The fixed configs and splits for 30 MoleculeACE datasets are included. The current committed Table C summary contains MolMCL baselines only; MoleculeSTM Table C runs were not completed in this fork.
+仓库中保留了 30 个 MoleculeACE 数据集的 config 和 split。当前已提交的 Table C 结果是 MolMCL baseline 汇总；MoleculeSTM 的 Table C 还没有完整跑完。
 
-## Current Results
+## 3. 环境构建
 
-Compact result files are stored under:
+如果你已经有可以跑 MoleculeSTM 的 conda 环境，可以直接复用。否则可以按下面方式创建环境。
+
+```bash
+conda create -n molstm python=3.7
+conda activate molstm
+
+conda install -y -c rdkit rdkit=2020.09.1.0
+conda install -y -c conda-forge -c pytorch pytorch=1.9.1
+conda install -y -c pyg -c conda-forge pyg==2.0.3
+
+pip install pandas scikit-learn tqdm transformers requests matplotlib spacy Levenshtein ogb==1.2.0
+```
+
+如果要运行 SMILES 分支，还需要原始 MoleculeSTM 的 MegaMolBART/Megatron/Apex 依赖。可以参考官方 MoleculeSTM 的安装方式，也可以复用已经配置好的 MoleculeSTM 环境。
+
+## 4. 数据和 checkpoint 准备
+
+本仓库不提交数据集和预训练权重，需要本地准备。
+
+设置 ChemVL 数据目录：
+
+```bash
+export CHEMVL_DATA_ROOT=/path/to/chemvl-data
+```
+
+该目录需要包含 ChemVL processed CSV，例如：
+
+```text
+${CHEMVL_DATA_ROOT}/finetuning_datasets/MPP/classification/bace/processed/bace_processed_ac.csv
+${CHEMVL_DATA_ROOT}/finetuning_datasets/MPP/classification/bbbp/processed/bbbp_processed_ac.csv
+${CHEMVL_DATA_ROOT}/finetuning_datasets/MPP/regression/esol/processed/esol_processed_ac.csv
+```
+
+MoleculeSTM checkpoint 默认使用官方目录结构：
+
+```text
+data/pretrained_MoleculeSTM/
+data/pretrained_MegaMolBART/checkpoints/
+MoleculeSTM/bart_vocab.txt
+```
+
+也可以用环境变量指定：
+
+```bash
+export MOLECULESTM_GRAPH_CKPT=/path/to/graph/molecule_model.pth
+export MOLECULESTM_SMILES_CKPT=/path/to/smiles/molecule_model.pth
+```
+
+## 5. 快速测试
+
+Graph 分支 smoke test：
+
+```bash
+export CHEMVL_DATA_ROOT=/path/to/chemvl-data
+
+python -u chemvl_benchmark/scripts/run_batch.py \
+  --tables A \
+  --tasks bbbp \
+  --runseeds 1 \
+  --molecule_type Graph \
+  --epochs 1 \
+  --output_root outputs/chemvl_benchmark_smoke
+```
+
+SMILES 分支 smoke test：
+
+```bash
+export CHEMVL_DATA_ROOT=/path/to/chemvl-data
+
+python -u chemvl_benchmark/scripts/run_batch.py \
+  --tables A \
+  --tasks bbbp \
+  --runseeds 1 \
+  --molecule_type SMILES \
+  --epochs 1 \
+  --batch_size 8 \
+  --output_root outputs/chemvl_benchmark_smiles_smoke
+```
+
+只检查命令是否能生成，不真正训练：
+
+```bash
+python chemvl_benchmark/scripts/run_batch.py \
+  --tables A \
+  --tasks bbbp \
+  --runseeds 1 \
+  --molecule_type Graph \
+  --dry_run
+```
+
+## 6. 完整运行方法
+
+Graph 分支运行 Table A/B：
+
+```bash
+export CHEMVL_DATA_ROOT=/path/to/chemvl-data
+bash chemvl_benchmark/scripts/run_graph_ab.sh
+```
+
+SMILES 分支运行 Table A/B：
+
+```bash
+export CHEMVL_DATA_ROOT=/path/to/chemvl-data
+bash chemvl_benchmark/scripts/run_smiles_ab.sh
+```
+
+两个脚本默认运行：
+
+```text
+Table A + Table B
+runseed 1, 2, 3
+```
+
+只跑指定数据集：
+
+```bash
+bash chemvl_benchmark/scripts/run_graph_ab.sh --tasks bace bbbp
+bash chemvl_benchmark/scripts/run_smiles_ab.sh --tasks bace bbbp
+```
+
+自定义输出目录：
+
+```bash
+OUTPUT_ROOT=outputs/my_graph_run bash chemvl_benchmark/scripts/run_graph_ab.sh
+OUTPUT_ROOT=outputs/my_smiles_run bash chemvl_benchmark/scripts/run_smiles_ab.sh
+```
+
+## 7. 结果汇总
+
+Graph 结果汇总：
+
+```bash
+python chemvl_benchmark/scripts/summarize.py \
+  --moleculestm_output outputs/chemvl_benchmark_graph_runs \
+  --output_dir outputs/chemvl_benchmark_graph_tables
+```
+
+SMILES 结果汇总：
+
+```bash
+python chemvl_benchmark/scripts/summarize.py \
+  --moleculestm_output outputs/chemvl_benchmark_smiles_runs \
+  --output_dir outputs/chemvl_benchmark_smiles_tables
+```
+
+汇总脚本会生成：
+
+```text
+raw_results.csv
+summary_long.csv
+table_A_moleculenet_scaffold.csv
+table_B_moleculenet_random_scaffold.csv
+```
+
+## 8. 已提交结果
+
+已完成实验的汇总结果位于：
 
 ```text
 chemvl_benchmark/results/moleculestm_graph/
 chemvl_benchmark/results/moleculestm_smiles/
 ```
 
-Important result tables:
+其中：
 
 ```text
 chemvl_benchmark/results/moleculestm_graph/table_A_moleculenet_scaffold.csv
@@ -74,49 +230,31 @@ chemvl_benchmark/results/moleculestm_smiles/table_A_moleculenet_scaffold.csv
 chemvl_benchmark/results/moleculestm_smiles/table_B_moleculenet_random_scaffold.csv
 ```
 
-The SMILES results use the RNG fix documented in `chemvl_benchmark/DECISIONS.md`.
+SMILES 结果使用了 `chemvl_benchmark/DECISIONS.md` 中记录的 RNG 修复。
 
-## Quick Start
+## 9. 注意事项
 
-Use [RUNNING.md](RUNNING.md) for environment setup and run commands.
+不要提交以下内容：
 
-Minimal smoke test:
-
-```bash
-export CHEMVL_DATA_ROOT=/path/to/chemvl-data
-
-python -u chemvl_benchmark/scripts/run_batch.py   --tables A   --tasks bbbp   --runseeds 1   --molecule_type Graph   --epochs 1   --output_root outputs/chemvl_benchmark_smoke
+```text
+data/
+outputs/
+checkpoints/
+*.pth
+*.pt
+*.ckpt
+*.log
+__pycache__/
 ```
 
-Full A/B runs:
+这些已经在 `.gitignore` 中排除。固定 split 文件 `chemvl_benchmark/splits/**/*.npz` 是例外，需要提交，因为数据划分直接影响性能比较。
 
-```bash
-export CHEMVL_DATA_ROOT=/path/to/chemvl-data
-bash chemvl_benchmark/scripts/run_graph_ab.sh
-bash chemvl_benchmark/scripts/run_smiles_ab.sh
-```
+## 10. 与官方 MoleculeSTM 的关系
 
-## Reproducibility Notes
-
-- The fork does not vendor ChemVL as a git submodule.
-- ChemVL processed data is expected to exist locally and is referenced via `CHEMVL_DATA_ROOT`.
-- Fixed split indices are committed under `chemvl_benchmark/splits/`.
-- Large local artifacts are not committed: datasets, checkpoints, full run directories, logs, and prediction dumps.
-- `.gitignore` is configured to prevent accidental submission of local data and model weights.
-
-## Relationship to Upstream MoleculeSTM
-
-This fork is based on the official MoleculeSTM repository:
+本仓库保留官方 MoleculeSTM 作为基础实现：
 
 ```text
 https://github.com/chao1224/MoleculeSTM
 ```
 
-Original paper:
-
-```text
-MoleculeSTM: Multi-modal Molecule Structure-text Model for Text-based Editing and Retrieval
-Nature Machine Intelligence, 2023
-```
-
-This fork only adds the ChemVL benchmark wrapper and result package. The original MoleculeSTM model code remains the base implementation.
+本 fork 只新增 ChemVL benchmark wrapper、固定 split/config 和实验汇总结果。原始 MoleculeSTM 论文和模型代码归属于官方项目。
