@@ -1,0 +1,3 @@
+paper,variant,finetune_strategy,scope,task_alias,num_tasks,trainable,total,trainable_formatted,total_formatted,trainable_over_total,status,notes
+MoleculeSTM,Graph,FT,"ChemVL Table A scaffold, representative task bbbp",bbbp,1,1885507,1885507,1.89M,1.89M,1.89M / 1.89M,OK,Counted encoder plus ChemVL prediction head after applying fine_tuning requires_grad logic. Checkpoint loading does not change parameter count. checkpoint_status=loaded
+MoleculeSTM,SMILES,FT,"ChemVL Table A scaffold, representative task bbbp",bbbp,1,10010892,10010892,10.01M,10.01M,10.01M / 10.01M,OK,Counted encoder plus ChemVL prediction head after applying fine_tuning requires_grad logic. Checkpoint loading does not change parameter count. checkpoint_status=loaded

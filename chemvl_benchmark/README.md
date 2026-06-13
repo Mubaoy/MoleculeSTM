@@ -137,3 +137,27 @@ SMILES branch summaries:
 - `results/moleculestm_smiles/table_B_moleculenet_random_scaffold.csv`
 
 The SMILES results use the seed fix documented in `DECISIONS.md`.
+
+## Parameter Audit
+
+From the repository root:
+
+```bash
+conda activate molstm
+bash parameter_audit.sh
+```
+
+The script writes `parameter_summary.csv` in the repository root by default. It audits only the MoleculeSTM branches in this fork (`Graph` and `SMILES`). GEM and MoLFormer have their own independent `parameter_audit.sh` scripts in their respective repositories.
+
+The MoleculeSTM count is based on `model.parameters()` plus the ChemVL prediction head, after setting `requires_grad` according to the finetune strategy:
+
+- `fine_tuning`: encoder and prediction head are trainable.
+- `linear_probing`: encoder is frozen and only the prediction head is trainable.
+
+The default config is Table A `bbbp`, a representative single-task setup. For multi-task heads such as `tox21` or `sider`, pass a different config:
+
+```bash
+bash parameter_audit.sh \
+  --config chemvl_benchmark/configs/table_A_moleculenet_scaffold/tox21.json \
+  --output outputs/parameter_summary_tox21.csv
+```
